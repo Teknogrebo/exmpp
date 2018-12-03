@@ -7,3 +7,5 @@ include/internal/*known*.hrl
 doc/*.html
 doc/*.css
 doc/*.png
+.idea/
+*.iml
