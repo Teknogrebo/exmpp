@@ -1,6 +1,6 @@
 {application, exmpp, [
     {description, "XMPP/Jabber protocol oriented XML library"},
-    {vsn, "git-head"},
+    {vsn, "0.9.5"},
     {registered, [
         exmpp_sup,
         exmpp_compress,
