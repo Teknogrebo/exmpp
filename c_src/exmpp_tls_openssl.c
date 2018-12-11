@@ -18,6 +18,8 @@
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 #include <openssl/x509v3.h>
+#include <openssl/dh.h>
+#include <openssl/bn.h>
 
 #include "exmpp_tls.h"
 
@@ -934,9 +936,10 @@ DRIVER_INIT(DRIVER_NAME)
 	// Initialize ephemeral Diffie-Hellman parameters.
 	dh1024 = DH_new();
 	if (dh1024 != NULL) {
-		dh1024->p = BN_bin2bn(dh1024_p, sizeof(dh1024_p), NULL);
-		dh1024->g = BN_bin2bn(dh1024_g, sizeof(dh1024_g), NULL);
-		if (dh1024->p == NULL || dh1024->g == NULL) {
+		BIGNUM *bn_p = BN_bin2bn(dh1024_p, sizeof(dh1024_p), NULL);
+		BIGNUM *bn_g = BN_bin2bn(dh1024_g, sizeof(dh1024_g), NULL);
+		DH_set0_pqg(dh1024, bn_p, NULL, bn_g);
+		if (bn_p == NULL || bn_g == NULL) {
 			DH_free(dh1024);
 			dh1024 = NULL;
 		}
