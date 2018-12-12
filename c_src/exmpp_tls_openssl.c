@@ -27,6 +27,11 @@
 #  pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #endif
 
+
+#if OPENSSL_VERSION_NUMBER >= 0x1010007fL
+#define OPENSSL_OPAQUE_TYPES
+#endif
+
 #define	DRIVER_NAME	exmpp_tls_openssl
 #define CIPHERS         "DEFAULT:!EXPORT:!LOW:!SSLv2"
 
@@ -938,7 +943,12 @@ DRIVER_INIT(DRIVER_NAME)
 	if (dh1024 != NULL) {
 		BIGNUM *bn_p = BN_bin2bn(dh1024_p, sizeof(dh1024_p), NULL);
 		BIGNUM *bn_g = BN_bin2bn(dh1024_g, sizeof(dh1024_g), NULL);
+#ifdef OPENSSL_OPAQUE_TYPES
 		DH_set0_pqg(dh1024, bn_p, NULL, bn_g);
+#else
+		dh1024->p = bn_p;
+		dh1024->g = bn_q;
+#endif
 		if (bn_p == NULL || bn_g == NULL) {
 			DH_free(dh1024);
 			dh1024 = NULL;
